@@ -79,10 +79,36 @@
           </div>
         </div>
 
-        <!-- Остальные вкладки (фото и схемы) остаются без изменений -->
         <!-- Содержимое вкладки Фото -->
         <div class="tab-content" id="photos-content">
-          <!-- ... существующий код ... -->
+          <div class="photos-header">
+            <nav class="category-nav">
+              <button class="category-btn active" data-category="all">
+                Все фото
+              </button>
+              <button class="category-btn" data-category="beading">
+                <i class="fas fa-gem"></i> Бисероплетение
+              </button>
+              <button class="category-btn" data-category="sculpting">
+                <i class="fas fa-hands"></i> Лепка
+              </button>
+              <button class="category-btn" data-category="knitting">
+                <i class="fas fa-scroll"></i> Вязание
+              </button>
+            </nav>
+
+            <button class="upload-photo-btn" id="uploadPhotoBtn">
+              <i class="fas fa-plus"></i> Добавить фото
+            </button>
+          </div>
+
+          <div class="photos-container" id="photosContainer"></div>
+
+          <div class="no-content" id="noPhotos" style="display: none">
+            <i class="fas fa-images"></i>
+            <h3>В этой категории пока нет фотографий</h3>
+            <p>Но скоро обязательно появятся!</p>
+          </div>
         </div>
 
         <!-- Содержимое вкладки Схемы -->
@@ -92,11 +118,67 @@
       </div>
     </main>
 
-    <!-- УБИРАЕМ СЛОЖНЫЕ МОДАЛЬНЫЕ ОКНА - они больше не нужны -->
+    <!-- Модальное окно для загрузки фото -->
+    <div class="modal" id="uploadModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Добавить новое фото</h3>
+          <button class="close-modal" id="closeUploadModal">&times;</button>
+        </div>
+        <form id="uploadPhotoForm" class="upload-form">
+          <div class="form-group">
+            <label for="photoTitle">Название работы:</label>
+            <input type="text" id="photoTitle" required />
+          </div>
+
+          <div class="form-group">
+            <label for="photoDescription">Описание:</label>
+            <textarea id="photoDescription" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="photoCategory">Категория:</label>
+            <select id="photoCategory" required>
+              <option value="beading">Бисероплетение</option>
+              <option value="sculpting">Лепка</option>
+              <option value="knitting">Вязание</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="photoFile">Выберите фото:</label>
+            <input type="file" id="photoFile" accept="image/*" required />
+            <div class="image-preview" id="imagePreview"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelUpload">
+              Отмена
+            </button>
+            <button type="submit" class="btn-primary">Добавить фото</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Модальное окно для просмотра фото -->
+    <div class="modal" id="photoViewModal">
+      <div class="modal-content photo-viewer">
+        <button class="close-modal" id="closeViewModal">&times;</button>
+        <div class="photo-viewer-content">
+          <img id="fullSizePhoto" src="" alt="" />
+          <div class="photo-viewer-info">
+            <h3 id="viewerPhotoTitle"></h3>
+            <p id="viewerPhotoDescription"></p>
+            <div class="photo-category" id="viewerPhotoCategory"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="container">
-        <p>С любовью для мамы! ❤️</p>
+        <p>С любовью для мамы ❤️</p>
       </div>
     </footer>
 

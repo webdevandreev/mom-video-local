@@ -77,15 +77,17 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   ];
 
-  // Элементы DOM
+  // Элементы DOM для видео
   const videosContainer = document.getElementById("videosContainer");
-  const categoryButtons = document.querySelectorAll(".category-btn");
+  const categoryButtons = document.querySelectorAll(
+    "#videos-content .category-btn"
+  );
   const noVideosMessage = document.getElementById("noVideos");
 
-  // Инициализация - показываем все видео
+  // Инициализация видео - показываем все видео
   displayVideos(videosData);
 
-  // Обработчики для кнопок категорий
+  // Обработчики для кнопок категорий видео
   categoryButtons.forEach((button) => {
     button.addEventListener("click", function () {
       // Убираем активный класс у всех кнопок
@@ -181,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return article;
   }
 
-  // ⬇️⬇️⬇️ ФУНКЦИЯ АККОРДЕОНА ПЕРЕНЕСЕНА СЮДА ⬇️⬇️⬇️
+  // Функция аккордеона для материалов
   function initMaterialsAccordion() {
     document.addEventListener("click", function (e) {
       if (e.target.closest(".materials-toggle")) {
@@ -221,4 +223,255 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById(tabId + "-content").classList.add("active");
     });
   });
+
+  // ==================== КОД ДЛЯ ФОТО-ГАЛЕРЕИ ====================
+
+  // Данные фотографий (хранятся в localStorage)
+  let photosData = JSON.parse(localStorage.getItem("photosData")) || [
+    {
+      id: 1,
+      title: "Здесь будут фото",
+      description: "Красивая работа из бисера",
+      category: "beading",
+      imageUrl:
+        "https://via.placeholder.com/300x200/4a90e2/ffffff?text=Бисероплетение",
+    },
+    {
+      id: 2,
+      title: "Пример вязания",
+      description: "Теплая вязаная вещь",
+      category: "knitting",
+      imageUrl:
+        "https://via.placeholder.com/300x200/50c878/ffffff?text=Вязание",
+    },
+  ];
+
+  // Функция для сохранения данных в localStorage
+  function savePhotosData() {
+    localStorage.setItem("photosData", JSON.stringify(photosData));
+  }
+
+  // Функция для отображения фотографий
+  function displayPhotos(category = "all") {
+    const photosContainer = document.getElementById("photosContainer");
+    const noPhotos = document.getElementById("noPhotos");
+
+    photosContainer.innerHTML = "";
+
+    const filteredPhotos =
+      category === "all"
+        ? photosData
+        : photosData.filter((photo) => photo.category === category);
+
+    if (filteredPhotos.length === 0) {
+      noPhotos.style.display = "block";
+      photosContainer.style.display = "none";
+      return;
+    }
+
+    noPhotos.style.display = "none";
+    photosContainer.style.display = "grid";
+
+    filteredPhotos.forEach((photo) => {
+      const photoCard = createPhotoCard(photo);
+      photosContainer.appendChild(photoCard);
+    });
+  }
+
+  // Функция создания карточки фото
+  function createPhotoCard(photo) {
+    const photoCard = document.createElement("div");
+    photoCard.className = "photo-card";
+    photoCard.setAttribute("data-id", photo.id);
+
+    photoCard.innerHTML = `
+      <img src="${photo.imageUrl}" alt="${photo.title}" class="photo-image">
+      <div class="photo-info">
+        <div class="photo-title">${photo.title}</div>
+        <div class="photo-description">${photo.description}</div>
+        <div class="photo-category">${getCategoryName(photo.category)}</div>
+      </div>
+    `;
+
+    // Добавляем обработчик клика для просмотра фото
+    photoCard.addEventListener("click", () => openPhotoViewer(photo));
+
+    return photoCard;
+  }
+
+  // Функция для получения читаемого названия категории
+  function getCategoryName(category) {
+    const categories = {
+      beading: "Бисероплетение",
+      sculpting: "Лепка",
+      knitting: "Вязание",
+    };
+    return categories[category] || category;
+  }
+
+  // Функция для открытия просмотрщика фото
+  function openPhotoViewer(photo) {
+    const modal = document.getElementById("photoViewModal");
+    const fullSizeImg = document.getElementById("fullSizePhoto");
+    const title = document.getElementById("viewerPhotoTitle");
+    const description = document.getElementById("viewerPhotoDescription");
+    const category = document.getElementById("viewerPhotoCategory");
+
+    fullSizeImg.src = photo.imageUrl;
+    title.textContent = photo.title;
+    description.textContent = photo.description;
+    category.textContent = getCategoryName(photo.category);
+
+    modal.style.display = "block";
+  }
+
+  // Функция для загрузки фото
+  function handlePhotoUpload(event) {
+    event.preventDefault();
+
+    const title = document.getElementById("photoTitle").value;
+    const description = document.getElementById("photoDescription").value;
+    const category = document.getElementById("photoCategory").value;
+    const fileInput = document.getElementById("photoFile");
+
+    if (!fileInput.files[0]) {
+      alert("Пожалуйста, выберите файл");
+      return;
+    }
+
+    const file = fileInput.files[0];
+
+    // Проверяем размер файла (максимум 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Файл слишком большой. Максимальный размер: 5MB");
+      return;
+    }
+
+    // Создаем URL для загруженного файла
+    const imageUrl = URL.createObjectURL(file);
+
+    // Создаем новый объект фото
+    const newPhoto = {
+      id: Date.now(), // Используем timestamp как ID
+      title: title,
+      description: description,
+      category: category,
+      imageUrl: imageUrl,
+    };
+
+    // Добавляем фото в массив
+    photosData.unshift(newPhoto);
+
+    // Сохраняем в localStorage
+    savePhotosData();
+
+    // Закрываем модальное окно
+    closeUploadModal();
+
+    // Очищаем форму
+    document.getElementById("uploadPhotoForm").reset();
+    document.getElementById("imagePreview").style.display = "none";
+
+    // Обновляем отображение фотографий
+    displayPhotos(getCurrentPhotoCategory());
+
+    alert("Фото успешно добавлено!");
+  }
+
+  // Функция для предпросмотра изображения
+  function previewImage(event) {
+    const preview = document.getElementById("imagePreview");
+    const file = event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        preview.style.display = "block";
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      preview.style.display = "none";
+    }
+  }
+
+  // Функции для работы с модальными окнами
+  function openUploadModal() {
+    document.getElementById("uploadModal").style.display = "block";
+  }
+
+  function closeUploadModal() {
+    document.getElementById("uploadModal").style.display = "none";
+  }
+
+  function closeViewModal() {
+    document.getElementById("photoViewModal").style.display = "none";
+  }
+
+  // Функция для получения текущей активной категории фото
+  function getCurrentPhotoCategory() {
+    const activeBtn = document.querySelector(
+      "#photos-content .category-btn.active"
+    );
+    return activeBtn ? activeBtn.dataset.category : "all";
+  }
+
+  // Инициализация фото-галереи
+  function initPhotoGallery() {
+    displayPhotos();
+
+    // Обработчики для категорий фото
+    const photoCategoryBtns = document.querySelectorAll(
+      "#photos-content .category-btn"
+    );
+    photoCategoryBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        photoCategoryBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        displayPhotos(btn.dataset.category);
+      });
+    });
+
+    // Обработчики для модальных окон
+    document
+      .getElementById("uploadPhotoBtn")
+      .addEventListener("click", openUploadModal);
+    document
+      .getElementById("closeUploadModal")
+      .addEventListener("click", closeUploadModal);
+    document
+      .getElementById("cancelUpload")
+      .addEventListener("click", closeUploadModal);
+    document
+      .getElementById("closeViewModal")
+      .addEventListener("click", closeViewModal);
+
+    // Обработчик формы загрузки
+    document
+      .getElementById("uploadPhotoForm")
+      .addEventListener("submit", handlePhotoUpload);
+
+    // Обработчик предпросмотра изображения
+    document
+      .getElementById("photoFile")
+      .addEventListener("change", previewImage);
+
+    // Закрытие модальных окон при клике вне контента
+    window.addEventListener("click", function (event) {
+      const uploadModal = document.getElementById("uploadModal");
+      const viewModal = document.getElementById("photoViewModal");
+
+      if (event.target === uploadModal) {
+        closeUploadModal();
+      }
+      if (event.target === viewModal) {
+        closeViewModal();
+      }
+    });
+  }
+
+  // Инициализируем фото-галерею
+  initPhotoGallery();
 });
