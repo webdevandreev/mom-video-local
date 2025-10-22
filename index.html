@@ -1,101 +1,116 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>🎨 Творческая мастерская</title>
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGQLS39XC5"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-KGQLS39XC5"
+    ></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-KGQLS39XC5');
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-KGQLS39XC5");
     </script>
     <!-- Временное решение - эмодзи как фавиконка -->
     <link rel="stylesheet" href="css/style.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-</head>
-<body>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <header class="header">
-        <div class="container">
-            <h1><i class="fas fa-palette"></i> Творческая мастерская</h1>
-            <p>Видео-уроки и фото-галерея работ в одном удобном месте</p>
-        </div>
+      <div class="container">
+        <h1><i class="fas fa-palette"></i> Творческая мастерская</h1>
+        <p>Видео-уроки и фото-галерея работ в одном удобном месте</p>
+      </div>
     </header>
 
     <main class="main">
-        <div class="container">
-            <!-- Вкладки -->
-            <nav class="tabs-nav">
-                <button class="tab-btn active" data-tab="videos">
-                    <i class="fas fa-video"></i> Видео-уроки
-                </button>
-                <button class="tab-btn" data-tab="photos">
-                    <i class="fas fa-images"></i> Фото-галерея
-                </button>
-                <button class="tab-btn" data-tab="instructions">
-                    <i class="fas fa-file-pdf"></i> Схемы и инструкции
-                </button>
-            </nav>
+      <div class="container">
+        <!-- Вкладки -->
+        <nav class="tabs-nav">
+          <button class="tab-btn active" data-tab="videos">
+            <i class="fas fa-video"></i> Видео-уроки
+          </button>
+          <button class="tab-btn" data-tab="photos">
+            <i class="fas fa-images"></i> Фото-галерея
+          </button>
+          <button class="tab-btn" data-tab="instructions">
+            <i class="fas fa-file-pdf"></i> Схемы и инструкции
+          </button>
+        </nav>
 
-            <!-- Содержимое вкладки Видео -->
-            <div class="tab-content active" id="videos-content">
-                <nav class="category-nav">
-                    <button class="category-btn active" data-category="all">Все видео</button>
-                    <button class="category-btn" data-category="beading">
-                        <i class="fas fa-gem"></i> Бисероплетение
-                    </button>
-                    <button class="category-btn" data-category="sculpting">
-                        <i class="fas fa-hands"></i> Лепка
-                    </button>
-                    <button class="category-btn" data-category="knitting">
-                        <i class="fas fa-scroll"></i> Вязание
-                    </button>
-                </nav>
+        <!-- Содержимое вкладки Видео -->
+        <div class="tab-content active" id="videos-content">
+          <nav class="category-nav">
+            <button class="category-btn active" data-category="all">
+              Все видео
+            </button>
+            <button class="category-btn" data-category="beading">
+              <i class="fas fa-gem"></i> Бисероплетение
+            </button>
+            <button class="category-btn" data-category="sculpting">
+              <i class="fas fa-hands"></i> Лепка
+            </button>
+            <button class="category-btn" data-category="knitting">
+              <i class="fas fa-scroll"></i> Вязание
+            </button>
+          </nav>
 
-                <div class="videos-container" id="videosContainer">
-                </div>
+          <div class="videos-container" id="videosContainer"></div>
 
-                <div class="no-content" id="noVideos" style="display: none">
-                    <i class="fas fa-video-slash"></i>
-                    <h3>В этой категории пока нет видео</h3>
-                    <p>Но скоро обязательно появятся!</p>
-                </div>
-            </div>
-
-            <!-- Остальные вкладки (фото и схемы) остаются без изменений -->
-            <!-- Содержимое вкладки Фото -->
-            <div class="tab-content" id="photos-content">
-                <!-- ... существующий код ... -->
-            </div>
-
-            <!-- Содержимое вкладки Схемы -->
-            <div class="tab-content" id="instructions-content">
-                <!-- ... существующий код ... -->
-            </div>
+          <div class="no-content" id="noVideos" style="display: none">
+            <i class="fas fa-video-slash"></i>
+            <h3>В этой категории пока нет видео</h3>
+            <p>Но скоро обязательно появятся!</p>
+          </div>
         </div>
+
+        <!-- Остальные вкладки (фото и схемы) остаются без изменений -->
+        <!-- Содержимое вкладки Фото -->
+        <div class="tab-content" id="photos-content">
+          <!-- ... существующий код ... -->
+        </div>
+
+        <!-- Содержимое вкладки Схемы -->
+        <div class="tab-content" id="instructions-content">
+          <!-- ... существующий код ... -->
+        </div>
+      </div>
     </main>
 
     <!-- УБИРАЕМ СЛОЖНЫЕ МОДАЛЬНЫЕ ОКНА - они больше не нужны -->
-    
+
     <footer class="footer">
-        <div class="container">
-            <p>С любовью для мамы! ❤️</p>
-        </div>
+      <div class="container">
+        <p>С любовью для мамы! ❤️</p>
+      </div>
     </footer>
 
     <section class="contacts-section">
-        <div class="container">
-            <div class="email-contact">
-                <a href="mailto:webdevandreev@gmail.com" class="email-btn">
-                    📧 Написать на почту
-                </a>
-            </div>
+      <div class="container">
+        <div class="email-contact">
+          <a href="mailto:webdevandreev@gmail.com" class="email-btn">
+            📧 Написать на почту
+          </a>
         </div>
+      </div>
     </section>
 
     <!-- НЕПРОСТОЙ JS ДЛЯ ФИЛЬТРАЦИИ -->
     <script src="js/app.js"></script>
-</body>
+  </body>
 </html>
