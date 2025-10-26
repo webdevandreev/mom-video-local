@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let photosData = JSON.parse(localStorage.getItem("photosData")) || [
     {
       id: 1,
-      title: "Здесь будут фото",
+      title: "Тесты",
       description: "Красивая работа из бисера",
       category: "beading",
       imageUrl:
