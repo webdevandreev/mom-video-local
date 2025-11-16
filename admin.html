@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Творческая мастерская</title>
+    <link rel="stylesheet" href="css/style.css?v=sw13">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-cogs"></i> Админ-панель</h1>
+            <p>Управление фото-галереей</p>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- Статистика -->
+            <div class="admin-stats" style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h2 style="margin-bottom: 15px;">📊 Статистика</h2>
+                <div id="statsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- Статистика будет загружена через JS -->
+                </div>
+            </div>
+
+            <!-- Управление фото -->
+            <div class="admin-photos" style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>🖼️ Управление фото</h2>
+                    <div>
+                        <button id="refreshBtn" class="upload-photo-btn" style="margin-right: 10px;">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                        <a href="index.html" class="upload-photo-btn" style="background: #4a90e2; text-decoration: none;">
+                            <i class="fas fa-home"></i> На сайт
+                        </a>
+                    </div>
+                </div>
+
+                <div class="photos-container" id="adminPhotosContainer">
+                    <!-- Фото будут загружены через JS -->
+                </div>
+
+                <div class="no-content" id="noAdminPhotos" style="display: none">
+                    <i class="fas fa-images"></i>
+                    <h3>В галерее пока нет фотографий</h3>
+                    <p>Загрузите первые фото через основную галерею</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Подтверждение удаления</h3>
+                <button class="close-modal" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="upload-form">
+                <p id="deleteConfirmText">Вы уверены, что хотите удалить это фото?</p>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelDelete">Отмена</button>
+                    <button type="button" class="btn-primary" id="confirmDelete" style="background: #e74c3c;">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p><a href="index.html" style="color: white; text-decoration: none;">← Вернуться на сайт</a></p>
+        </div>
+    </footer>
+
+    <script src="js/admin.js?v=sw13"></script>
+</body>
+</html>

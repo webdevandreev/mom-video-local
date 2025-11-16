@@ -363,6 +363,69 @@ async function refreshPhotoGallery() {
     return photoCard;
   }
 
+  // Добавляем в существующий app.js после функции createPhotoCard:
+
+// Функция удаления фото
+async function deletePhoto(photoId) {
+    if (!confirm('Вы уверены, что хотите удалить это фото?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/delete_photo.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: photoId })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showNotification('✅ Фото успешно удалено', 'success');
+            await refreshPhotoGallery(); // Обновляем галерею
+        } else {
+            showNotification('❌ Ошибка удаления: ' + result.error, 'error');
+        }
+    } catch (error) {
+        console.error('Ошибка удаления:', error);
+        showNotification('❌ Сетевая ошибка при удалении', 'error');
+    }
+}
+
+// Обновляем функцию createPhotoCard для добавления кнопки удаления:
+function createPhotoCard(photo) {
+    const photoCard = document.createElement("div");
+    photoCard.className = "photo-card";
+    photoCard.setAttribute("data-id", photo.id);
+
+    photoCard.innerHTML = `
+      <img src="${photo.imageUrl}" alt="${photo.title}" class="photo-image">
+      <div class="photo-info">
+        <div class="photo-title">${photo.title}</div>
+        <div class="photo-description">${photo.description}</div>
+        <div class="photo-category">${getCategoryName(photo.category)}</div>
+        <button class="delete-photo-btn" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; margin-top: 8px; font-size: 0.8em; width: 100%;">
+            <i class="fas fa-trash"></i> Удалить
+        </button>
+      </div>
+    `;
+
+    // Обработчик удаления
+    const deleteBtn = photoCard.querySelector('.delete-photo-btn');
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Предотвращаем открытие просмотрщика
+        deletePhoto(photo.id);
+    });
+
+    // Обработчик просмотра (только по клику на изображение)
+    const photoImage = photoCard.querySelector('.photo-image');
+    photoImage.addEventListener('click', () => openPhotoViewer(photo));
+
+    return photoCard;
+}
+
   // Функция для получения читаемого названия категории
   function getCategoryName(category) {
     const categories = {
