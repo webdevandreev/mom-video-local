@@ -225,26 +225,90 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ==================== КОД ДЛЯ ФОТО-ГАЛЕРЕИ ====================
+  // ==================== СИСТЕМА УВЕДОМЛЕНИЙ ====================
+function showNotification(message, type = 'info', duration = 3000) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Авто-удаление через указанное время
+    setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, duration);
+    
+    return notification;
+}
+  // ==================== ФУНКЦИЯ ЗАГРУЗКИ НА СЕРВЕР ====================
+  async function uploadPhotoToServer(formData) {
+    try {
+      const response = await fetch("/api/upload.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Ошибка загрузки:", error);
+      return { success: false, error: "Сетевая ошибка" };
+    }
+  }
+
+  // ==================== СЕРВЕРНОЕ ХРАНИЛИЩЕ ФОТО ====================
+
+// Загрузка фото с сервера
+async function loadPhotosFromServer() {
+  try {
+    const response = await fetch('/api/get_photos.php');
+    const photos = await response.json();
+    return photos.map(photo => ({
+      ...photo,
+      imageUrl: '/uploads/users/' + photo.filename
+    }));
+  } catch (error) {
+    console.error('Ошибка загрузки фото:', error);
+    return [];
+  }
+}
+
+// Сохранение данных фото на сервер
+async function savePhotoData(photoData) {
+  try {
+    const response = await fetch('/api/save_photo_data.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(photoData)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Ошибка сохранения данных:', error);
+    return { success: false };
+  }
+}
+
+// Обновление галереи с сервера
+async function refreshPhotoGallery() {
+  const serverPhotos = await loadPhotosFromServer();
+  photosData = serverPhotos; // Заменяем локальные данные серверными
+  savePhotosData(); // Сохраняем в localStorage для кеша
+  displayPhotos(getCurrentPhotoCategory());
+}
 
   // Данные фотографий (хранятся в localStorage)
-  let photosData = JSON.parse(localStorage.getItem("photosData")) || [
-    {
-      id: 1,
-      title: "Тесты",
-      description: "Красивая работа из бисера",
-      category: "beading",
-      imageUrl:
-        "https://via.placeholder.com/300x200/4a90e2/ffffff?text=Бисероплетение",
-    },
-    {
-      id: 2,
-      title: "Пример вязания",
-      description: "Теплая вязаная вещь",
-      category: "knitting",
-      imageUrl:
-        "https://via.placeholder.com/300x200/50c878/ffffff?text=Вязание",
-    },
-  ];
+  let photosData = JSON.parse(localStorage.getItem("photosData")) || [];
 
   // Функция для сохранения данных в localStorage
   function savePhotosData() {
@@ -326,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Функция для загрузки фото
-  function handlePhotoUpload(event) {
+  async function handlePhotoUpload(event) {
     event.preventDefault();
 
     const title = document.getElementById("photoTitle").value;
@@ -335,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const fileInput = document.getElementById("photoFile");
 
     if (!fileInput.files[0]) {
-      alert("Пожалуйста, выберите файл");
+      showNotification("📷 Пожалуйста, выберите файл", "warning", 2000);
       return;
     }
 
@@ -343,39 +407,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Проверяем размер файла (максимум 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert("Файл слишком большой. Максимальный размер: 5MB");
+      showNotification("📁 Файл слишком большой. Максимальный размер: 5MB", "error", 3000);
       return;
     }
 
-    // Создаем URL для загруженного файла
-    const imageUrl = URL.createObjectURL(file);
+    // Создаем FormData для отправки на сервер
+    const formData = new FormData();
+    formData.append("photo", file);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("category", category);
 
-    // Создаем новый объект фото
-    const newPhoto = {
-      id: Date.now(), // Используем timestamp как ID
-      title: title,
-      description: description,
-      category: category,
-      imageUrl: imageUrl,
-    };
+    // Показываем уведомление о загрузке (без блокировки интерфейса!)
+    const loadingNotification = showNotification("⏳ Загружаем фото на сервер...", "info", 0);
 
-    // Добавляем фото в массив
-    photosData.unshift(newPhoto);
+    try {
+      // 1. Отправляем файл на сервер
+      const uploadResult = await uploadPhotoToServer(formData);
+    
+      if (uploadResult.success) {
+        // 2. Сохраняем метаданные в JSON на сервере
+        const saveResult = await savePhotoData({
+          title: title,
+          description: description,
+          category: category,
+          filename: uploadResult.filename
+        });
 
-    // Сохраняем в localStorage
-    savePhotosData();
+        if (saveResult.success) {
+          // Убираем уведомление о загрузке
+          loadingNotification.classList.add('fade-out');
+          setTimeout(() => loadingNotification.remove(), 300);
+        
+          // Показываем успех
+          showNotification("✅ Фото успешно загружено!", "success", 3000);
+        
+          // 3. Обновляем галерею с сервера
+          await refreshPhotoGallery();
+        
+          // Закрываем модальное окно
+          closeUploadModal();
 
-    // Закрываем модальное окно
-    closeUploadModal();
+          // Очищаем форму
+          document.getElementById("uploadPhotoForm").reset();
+          document.getElementById("imagePreview").style.display = "none";
 
-    // Очищаем форму
-    document.getElementById("uploadPhotoForm").reset();
-    document.getElementById("imagePreview").style.display = "none";
-
-    // Обновляем отображение фотографий
-    displayPhotos(getCurrentPhotoCategory());
-
-    alert("Фото успешно добавлено!");
+        } else {
+          loadingNotification.classList.add('fade-out');
+          setTimeout(() => loadingNotification.remove(), 300);
+          showNotification("❌ Ошибка сохранения данных фото", "error", 4000);
+        }
+      } else {
+        loadingNotification.classList.add('fade-out');
+        setTimeout(() => loadingNotification.remove(), 300);
+        showNotification("❌ Ошибка загрузки: " + uploadResult.error, "error", 4000);
+      }
+    } catch (error) {
+      loadingNotification.classList.add('fade-out');
+      setTimeout(() => loadingNotification.remove(), 300);
+      showNotification("❌ Сетевая ошибка при загрузке", "error", 4000);
+    }
   }
 
   // Функция для предпросмотра изображения
@@ -420,7 +511,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Инициализация фото-галереи
   function initPhotoGallery() {
-    displayPhotos();
+    refreshPhotoGallery();
 
     // Обработчики для категорий фото
     const photoCategoryBtns = document.querySelectorAll(

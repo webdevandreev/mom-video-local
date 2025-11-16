@@ -1,4 +1,5 @@
-const CACHE_NAME = "mom-video-v5";
+// service-worker.js
+const CACHE_NAME = "mom-video-v10";
 
 self.addEventListener("install", (event) => {
   console.log("🔄 Service Worker УСТАНОВЛЕН");
@@ -25,14 +26,21 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  // НЕ обрабатываем внешние URL (via.placeholder.com и др.)
+  if (
+    event.request.url.includes("via.placeholder.com") ||
+    event.request.url.includes("tms.dmp.wi-fi.ru") ||
+    !event.request.url.startsWith("https://videomasterclass.ru")
+  ) {
+    return; // Пропускаем - пусть браузер обрабатывает сам
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Всегда загружаем свежие файлы с сервера
         return response;
       })
       .catch(() => {
-        // Только при офлайне используем кеш
         return caches.match(event.request);
       })
   );

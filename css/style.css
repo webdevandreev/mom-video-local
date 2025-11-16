@@ -706,6 +706,7 @@ body {
 }
 
 .close-modal {
+  margin-left: 10px;
   background: none;
   border: none;
   font-size: 24px;
@@ -853,4 +854,65 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
   }
+}
+
+/* ==================== СТИЛИ УВЕДОМЛЕНИЙ ==================== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: slideIn 0.3s ease;
+    max-width: 300px;
+}
+
+.notification.success { 
+    background: #4CAF50; 
+    border-left: 4px solid #2E7D32;
+}
+
+.notification.error { 
+    background: #f44336; 
+    border-left: 4px solid #c62828;
+}
+
+.notification.info { 
+    background: #2196F3; 
+    border-left: 4px solid #1565C0;
+}
+
+.notification.warning { 
+    background: #ff9800;
+    border-left: 4px solid #ef6c00;
+}
+
+@keyframes slideIn {
+    from { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+.notification.fade-out {
+    animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideOut {
+    from { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+    to { 
+        transform: translateX(100%); 
+        opacity: 0; 
+    }
 }

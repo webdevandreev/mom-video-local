@@ -24,7 +24,7 @@
       gtag("config", "G-KGQLS39XC5");
     </script>
     <!-- Временное решение - эмодзи как фавиконка -->
-    <link rel="stylesheet" href="css/style.css?v=sw5" />
+    <link rel="stylesheet" href="css/style.css?v=sw12" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -192,38 +192,38 @@
       </div>
     </section>
 
-    <!-- НЕПРОСТОЙ JS ДЛЯ ФИЛЬТРАЦИИ -->
-    <script src="js/app.js?v=sw5"></script>
+    <!-- JS ДЛЯ ФИЛЬТРАЦИИ -->
+    <script src="js/app.js?v=sw12"></script>
     <script>
       // Регистрация Service Worker
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("/service-worker.js?v=sw5")
-          .then((registration) => {
-            console.log("✅ Service Worker зарегистрирован:", registration);
+      // if ("serviceWorker" in navigator) {
+      //   navigator.serviceWorker
+      //     .register("/service-worker.js?v=sw10")
+      //     .then((registration) => {
+      //       console.log("✅ Service Worker зарегистрирован:", registration);
 
-            // Принудительное обновление при загрузке
-            registration.addEventListener("updatefound", () => {
-              const newWorker = registration.installing;
-              console.log("🔄 Обнаружено обновление Service Worker");
-              newWorker.addEventListener("statechange", () => {
-                if (newWorker.state === "activated") {
-                  console.log("🎯 Новый Service Worker активирован!");
-                  window.location.reload();
-                }
-              });
-            });
-          })
-          .catch((error) => {
-            console.log("❌ Ошибка регистрации Service Worker:", error);
-          });
+      // Принудительное обновление при загрузке
+      //       registration.addEventListener("updatefound", () => {
+      //         const newWorker = registration.installing;
+      //         console.log("🔄 Обнаружено обновление Service Worker");
+      //         newWorker.addEventListener("statechange", () => {
+      //           if (newWorker.state === "activated") {
+      //             console.log("🎯 Новый Service Worker активирован!");
+      //             window.location.reload();
+      //           }
+      //         });
+      //       });
+      //     })
+      //     .catch((error) => {
+      //       console.log("❌ Ошибка регистрации Service Worker:", error);
+      //     });
 
-        // Проверяем обновления при фокусе
-        navigator.serviceWorker.addEventListener("controllerchange", () => {
-          console.log("🔄 Controller changed - обновляем страницу");
-          window.location.reload();
-        });
-      }
+      // Проверяем обновления при фокусе
+      //   navigator.serviceWorker.addEventListener("controllerchange", () => {
+      //     console.log("🔄 Controller changed - обновляем страницу");
+      //     window.location.reload();
+      //   });
+      //  }
     </script>
   </body>
 </html>
