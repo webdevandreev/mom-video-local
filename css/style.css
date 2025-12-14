@@ -146,33 +146,54 @@ body {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.video-card h3 {
-  color: #2c3e50;
+.video-header {
+  display: flex;
+  align-items: center;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.video-header h3 {
+  color: #2c3e50;
   font-size: 1.3rem;
-  border-bottom: 2px solid #4a90e2;
-  padding-bottom: 0.5rem;
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* Бейджи источников */
+.source-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pinterest-badge {
+  background: linear-gradient(135deg, #e60023, #bd001c);
+  color: white;
+}
+
+.rutube-badge {
+  background: linear-gradient(135deg, #333, #222);
+  color: white;
 }
 
 /* === VIDEO CONTAINER === */
 .video-container {
-  position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 ratio */
-  height: 0;
   margin: 1rem 0;
   border-radius: 8px;
   overflow: hidden;
-  background: #000;
 }
 
 .video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
+  min-height: 500px;
   border: none;
+  border-radius: 8px;
 }
 
 /* === VIDEO META INFO === */
@@ -277,6 +298,150 @@ body {
   font-weight: 500;
 }
 
+/* === PINTEREST КАРТОЧКА === */
+.pinterest-full-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.pinterest-full-card:hover {
+  transform: translateY(-5px);
+}
+
+.pinterest-card {
+  border: 2px solid #e60023;
+  border-radius: 12px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.pinterest-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #e60023, #ff3366);
+}
+
+.pinterest-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(230, 0, 35, 0.2);
+}
+
+.pinterest-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.pinterest-icon {
+  background: #e60023;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pinterest-icon i {
+  color: white;
+  font-size: 28px;
+}
+
+.pinterest-title-section {
+  flex-grow: 1;
+}
+
+.pinterest-title-section h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.pinterest-description {
+  margin-bottom: 25px;
+}
+
+.pinterest-description p {
+  color: #666;
+  margin: 0;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.pinterest-action {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 2px dashed #e60023;
+}
+
+.pinterest-action-btn {
+  background: #e60023;
+  color: white;
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pinterest-hint {
+  color: #999;
+  font-size: 14px;
+  margin: 5px 0 0 0;
+}
+
+.pinterest-hint i {
+  margin-right: 5px;
+}
+
+.pinterest-card::after {
+  content: '↗';
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #e60023;
+  font-size: 20px;
+  font-weight: bold;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.pinterest-card:hover::after {
+  opacity: 1;
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+
+/* Эффект нажатия для мобильных */
+.pinterest-card:active {
+  transform: scale(0.98) !important;
+  transition: transform 0.1s;
+}
+
 /* === NO CONTENT MESSAGE === */
 .no-content {
   text-align: center;
@@ -302,273 +467,6 @@ body {
 }
 
 /* === PHOTO GRID === */
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-/* === INSTRUCTIONS GRID === */
-.instructions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-/* === CONTACTS SECTION === */
-.contacts-section {
-  background: linear-gradient(135deg, #4a90e2, #357abd);
-  color: white;
-  padding: 0.8rem 1rem;
-  margin: 0.8rem auto;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-  text-align: center;
-  max-width: 1200px;
-}
-
-.email-contact {
-  margin: 0;
-}
-
-.email-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  padding: 0.4rem 1rem;
-  border-radius: 25px;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.8rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(6px);
-}
-
-.email-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Мобильная версия контактов */
-@media (max-width: 768px) {
-  .contacts-section {
-    padding: 0.6rem 0.8rem;
-    margin: 0.6rem auto;
-  }
-
-  .email-btn {
-    padding: 0.3rem 0.8rem;
-    font-size: 0.75rem;
-    gap: 0.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .contacts-section {
-    padding: 0.5rem 0.6rem;
-    margin: 0.5rem auto;
-  }
-
-  .email-btn {
-    padding: 0.25rem 0.7rem;
-    font-size: 0.7rem;
-  }
-}
-
-/* === FOOTER === */
-.footer {
-  background: linear-gradient(135deg, #e91e63, #ad1457);
-  color: white;
-  text-align: center;
-  padding: 1.5rem 0;
-  margin-top: 2rem;
-  position: relative;
-}
-
-.footer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #ff9eb5, #e91e63, #ff9eb5);
-}
-
-.footer p {
-  font-size: 1rem;
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Мобильная версия футера */
-@media (max-width: 768px) {
-  .footer {
-    padding: 1.2rem 0;
-    margin-top: 1.5rem;
-  }
-
-  .footer p {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer {
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-
-  .footer p {
-    font-size: 0.85rem;
-  }
-}
-
-/* === MOBILE STYLES === */
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
-  }
-
-  .header {
-    padding: 1rem 0;
-  }
-
-  .header h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .header p {
-    font-size: 0.9rem;
-  }
-
-  .tabs-nav {
-    flex-direction: column;
-    gap: 0.3rem;
-    margin: 1rem 0;
-  }
-
-  .tab-btn {
-    padding: 0.8rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .category-nav {
-    gap: 0.5rem;
-    padding: 0.8rem;
-  }
-
-  .category-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-  }
-
-  .videos-container {
-    gap: 1.5rem;
-  }
-
-  .video-card {
-    padding: 1rem;
-  }
-
-  .video-card h3 {
-    font-size: 1.1rem;
-  }
-
-  .video-tags {
-    gap: 0.3rem;
-  }
-
-  .video-tag {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.6rem;
-  }
-
-  /* Аккордеон для мобильных */
-  .materials-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .materials-chips {
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-  }
-
-  .materials-chips.expanded {
-    max-height: 500px;
-    opacity: 1;
-    margin-top: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    padding: 0.8rem 0;
-  }
-
-  .header h1 {
-    font-size: 1.3rem;
-  }
-
-  .header p {
-    font-size: 0.8rem;
-  }
-
-  .category-nav {
-    justify-content: center;
-  }
-
-  .category-btn {
-    flex: 1;
-    min-width: 120px;
-    justify-content: center;
-  }
-
-  .photo-grid,
-  .instructions-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .no-content {
-    padding: 2rem 1rem;
-  }
-
-  .no-content i {
-    font-size: 3rem;
-  }
-}
-
-/* === FIX FOR MOBILE VIEWPORT === */
-@media (max-width: 500px) {
-  * {
-    max-width: 100vw;
-  }
-
-  html,
-  body {
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  .container {
-    padding: 0 10px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
-
-/* Стили для фото-галереи */
 .photos-header {
   display: flex;
   justify-content: space-between;
@@ -657,7 +555,87 @@ body {
   margin-top: 8px;
 }
 
-/* Модальные окна */
+.delete-photo-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 0.8em;
+  width: 100%;
+}
+
+.delete-photo-btn:hover {
+  background: #c0392b;
+}
+
+/* === CONTACTS SECTION === */
+.contacts-section {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  padding: 0.8rem 1rem;
+  margin: 0.8rem auto;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  max-width: 1200px;
+}
+
+.email-contact {
+  margin: 0;
+}
+
+.email-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(6px);
+}
+
+.email-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* === FOOTER === */
+.footer {
+  background: linear-gradient(135deg, #e91e63, #ad1457);
+  color: white;
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff9eb5, #e91e63, #ff9eb5);
+}
+
+.footer p {
+  font-size: 1rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* === МОДАЛЬНЫЕ ОКНА === */
 .modal {
   display: none;
   position: fixed;
@@ -830,8 +808,179 @@ body {
   border-radius: 0 0 10px 10px;
 }
 
-/* Адаптивность */
+/* ==================== СТИЛИ УВЕДОМЛЕНИЙ ==================== */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease;
+  max-width: 300px;
+}
+
+.notification.success { 
+  background: #4CAF50; 
+  border-left: 4px solid #2E7D32;
+}
+
+.notification.error { 
+  background: #f44336; 
+  border-left: 4px solid #c62828;
+}
+
+.notification.info { 
+  background: #2196F3; 
+  border-left: 4px solid #1565C0;
+}
+
+.notification.warning { 
+  background: #ff9800;
+  border-left: 4px solid #ef6c00;
+}
+
+@keyframes slideIn {
+  from { 
+    transform: translateX(100%); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+}
+
+.notification.fade-out {
+  animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideOut {
+  from { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+  to { 
+    transform: translateX(100%); 
+    opacity: 0; 
+  }
+}
+
+/* === MOBILE STYLES === */
 @media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .header {
+    padding: 1rem 0;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .header p {
+    font-size: 0.9rem;
+  }
+
+  .tabs-nav {
+    flex-direction: column;
+    gap: 0.3rem;
+    margin: 1rem 0;
+  }
+
+  .tab-btn {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .category-nav {
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
+
+  .category-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .videos-container {
+    gap: 1.5rem;
+  }
+
+  .video-card {
+    padding: 1rem;
+  }
+
+  .video-container iframe {
+    min-height: 300px;
+  }
+
+  .video-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .source-badge {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  /* Pinterest карточка на мобильных */
+  .pinterest-card {
+    padding: 15px;
+    min-height: 300px;
+  }
+  
+  .pinterest-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .pinterest-icon i {
+    font-size: 24px;
+  }
+  
+  .pinterest-title-section h3 {
+    font-size: 18px;
+  }
+  
+  .pinterest-description p {
+    font-size: 14px;
+  }
+  
+  .pinterest-action-btn {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  /* Аккордеон для мобильных */
+  .materials-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .materials-chips {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+  }
+
+  .materials-chips.expanded {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 0.5rem;
+  }
+
   .photos-header {
     flex-direction: column;
     align-items: stretch;
@@ -856,63 +1005,105 @@ body {
   }
 }
 
-/* ==================== СТИЛИ УВЕДОМЛЕНИЙ ==================== */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 15px 20px;
-    border-radius: 8px;
-    color: white;
-    font-weight: 500;
-    z-index: 10000;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    animation: slideIn 0.3s ease;
-    max-width: 300px;
+@media (max-width: 480px) {
+  .header {
+    padding: 0.8rem 0;
+  }
+
+  .header h1 {
+    font-size: 1.3rem;
+  }
+
+  .header p {
+    font-size: 0.8rem;
+  }
+
+  .category-nav {
+    justify-content: center;
+  }
+
+  .category-btn {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+  }
+
+  .video-container iframe {
+    min-height: 250px;
+  }
+
+  .pinterest-card {
+    min-height: 280px;
+    padding: 12px;
+  }
+  
+  .pinterest-card-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .pinterest-title-section {
+    text-align: center;
+  }
+
+  .no-content {
+    padding: 2rem 1rem;
+  }
+
+  .no-content i {
+    font-size: 3rem;
+  }
 }
 
-.notification.success { 
-    background: #4CAF50; 
-    border-left: 4px solid #2E7D32;
+/* Для очень маленькой высоты экрана */
+@media (max-height: 600px) {
+  .pinterest-card {
+    min-height: 250px;
+    padding: 10px;
+  }
+  
+  .pinterest-card-header {
+    margin-bottom: 10px;
+  }
+  
+  .pinterest-description {
+    margin-bottom: 15px;
+  }
+  
+  .pinterest-action {
+    padding-top: 15px;
+  }
 }
 
-.notification.error { 
-    background: #f44336; 
-    border-left: 4px solid #c62828;
+/* === FIX FOR MOBILE VIEWPORT === */
+@media (max-width: 500px) {
+  * {
+    max-width: 100vw;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .container {
+    padding: 0 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 
-.notification.info { 
-    background: #2196F3; 
-    border-left: 4px solid #1565C0;
-}
-
-.notification.warning { 
-    background: #ff9800;
-    border-left: 4px solid #ef6c00;
-}
-
-@keyframes slideIn {
-    from { 
-        transform: translateX(100%); 
-        opacity: 0; 
-    }
-    to { 
-        transform: translateX(0); 
-        opacity: 1; 
-    }
-}
-
-.notification.fade-out {
-    animation: slideOut 0.3s ease forwards;
-}
-
-@keyframes slideOut {
-    from { 
-        transform: translateX(0); 
-        opacity: 1; 
-    }
-    to { 
-        transform: translateX(100%); 
-        opacity: 0; 
-    }
+/* Для тач-устройств */
+@media (hover: none) {
+  .pinterest-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .pinterest-card:active {
+    transform: scale(0.98) !important;
+    background: linear-gradient(135deg, #ffe5e5 0%, #ffffff 100%);
+  }
 }
