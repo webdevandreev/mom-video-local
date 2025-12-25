@@ -168,7 +168,7 @@ body {
   border-radius: 20px;
   font-size: 12px;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .pinterest-badge {
@@ -326,7 +326,7 @@ body {
 }
 
 .pinterest-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -415,7 +415,7 @@ body {
 }
 
 .pinterest-card::after {
-  content: '↗';
+  content: "↗";
   position: absolute;
   top: 15px;
   right: 15px;
@@ -432,8 +432,13 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
 }
 
 /* Эффект нажатия для мобильных */
@@ -818,39 +823,39 @@ body {
   color: white;
   font-weight: 500;
   z-index: 10000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideIn 0.3s ease;
   max-width: 300px;
 }
 
-.notification.success { 
-  background: #4CAF50; 
-  border-left: 4px solid #2E7D32;
+.notification.success {
+  background: #4caf50;
+  border-left: 4px solid #2e7d32;
 }
 
-.notification.error { 
-  background: #f44336; 
+.notification.error {
+  background: #f44336;
   border-left: 4px solid #c62828;
 }
 
-.notification.info { 
-  background: #2196F3; 
-  border-left: 4px solid #1565C0;
+.notification.info {
+  background: #2196f3;
+  border-left: 4px solid #1565c0;
 }
 
-.notification.warning { 
+.notification.warning {
   background: #ff9800;
   border-left: 4px solid #ef6c00;
 }
 
 @keyframes slideIn {
-  from { 
-    transform: translateX(100%); 
-    opacity: 0; 
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
-  to { 
-    transform: translateX(0); 
-    opacity: 1; 
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 
@@ -859,13 +864,13 @@ body {
 }
 
 @keyframes slideOut {
-  from { 
-    transform: translateX(0); 
-    opacity: 1; 
+  from {
+    transform: translateX(0);
+    opacity: 1;
   }
-  to { 
-    transform: translateX(100%); 
-    opacity: 0; 
+  to {
+    transform: translateX(100%);
+    opacity: 0;
   }
 }
 
@@ -936,24 +941,24 @@ body {
     padding: 15px;
     min-height: 300px;
   }
-  
+
   .pinterest-icon {
     width: 50px;
     height: 50px;
   }
-  
+
   .pinterest-icon i {
     font-size: 24px;
   }
-  
+
   .pinterest-title-section h3 {
     font-size: 18px;
   }
-  
+
   .pinterest-description p {
     font-size: 14px;
   }
-  
+
   .pinterest-action-btn {
     padding: 12px;
     font-size: 16px;
@@ -1036,13 +1041,13 @@ body {
     min-height: 280px;
     padding: 12px;
   }
-  
+
   .pinterest-card-header {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
-  
+
   .pinterest-title-section {
     text-align: center;
   }
@@ -1062,15 +1067,15 @@ body {
     min-height: 250px;
     padding: 10px;
   }
-  
+
   .pinterest-card-header {
     margin-bottom: 10px;
   }
-  
+
   .pinterest-description {
     margin-bottom: 15px;
   }
-  
+
   .pinterest-action {
     padding-top: 15px;
   }
@@ -1101,9 +1106,290 @@ body {
     transform: none;
     box-shadow: none;
   }
-  
+
   .pinterest-card:active {
     transform: scale(0.98) !important;
     background: linear-gradient(135deg, #ffe5e5 0%, #ffffff 100%);
+  }
+}
+
+/* === INSTRUCTIONS GRID === */
+.instructions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.instruction-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.instruction-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.instruction-preview {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.instruction-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.instruction-card:hover .instruction-preview img {
+  transform: scale(1.05);
+}
+
+.instruction-info {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.instruction-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.instruction-description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.instruction-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.instruction-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #f0f7ff;
+  color: #4a90e2;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.instruction-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.instruction-download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.instruction-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Модальное окно для предпросмотра PDF */
+.pdf-viewer-modal .modal-content {
+  max-width: 90%;
+  height: 90vh;
+  margin: 5vh auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.pdf-viewer-content {
+  flex-grow: 1;
+  padding: 1.5rem;
+  overflow: auto;
+}
+
+.pdf-viewer-content iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+.pdf-viewer-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Мобильные стили для схем */
+@media (max-width: 768px) {
+  .instructions-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .instruction-preview {
+    height: 180px;
+  }
+
+  .instruction-info {
+    padding: 1rem;
+  }
+
+  .instruction-title {
+    font-size: 1.1rem;
+  }
+
+  .instruction-meta {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+
+  .instruction-download-btn {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .instructions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .instruction-preview {
+    height: 160px;
+  }
+}
+
+/* Стили для загрузки схем */
+#uploadSchemeBtn {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+#uploadSchemeBtn:hover {
+  background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
+
+/* Превью для PDF файлов */
+.pdf-preview {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+}
+
+.pdf-preview i {
+  font-size: 48px;
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+/* Адаптивность для кнопки добавления схемы */
+@media (max-width: 768px) {
+  #instructions-content .photos-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #uploadSchemeBtn {
+    align-self: center;
+    margin-top: 10px;
+  }
+}
+/* Стили для кнопок действий в карточке схемы */
+.instruction-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.delete-scheme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.delete-scheme-btn:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.delete-scheme-btn:active {
+  transform: translateY(0);
+}
+
+/* Адаптивность для кнопок */
+@media (max-width: 768px) {
+  .instruction-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .instruction-download-btn,
+  .delete-scheme-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .instruction-meta {
+    flex-direction: column;
+    gap: 15px;
   }
 }

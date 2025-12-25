@@ -24,7 +24,7 @@
       gtag("config", "G-KGQLS39XC5");
     </script>
     <!-- Временное решение - эмодзи как фавиконка -->
-    <link rel="stylesheet" href="css/style.css?v=sw15" />
+    <link rel="stylesheet" href="css/style.css?v=sw32" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -97,9 +97,9 @@
               </button>
             </nav>
 
-            <!--<button class="upload-photo-btn" id="uploadPhotoBtn">
+            <button class="upload-photo-btn" id="uploadPhotoBtn">
               <i class="fas fa-plus"></i> Добавить фото
-            </button> -->
+            </button>
           </div>
 
           <div class="photos-container" id="photosContainer"></div>
@@ -113,7 +113,37 @@
 
         <!-- Содержимое вкладки Схемы -->
         <div class="tab-content" id="instructions-content">
-          <!-- ... существующий код ... -->
+          <div class="photos-header">
+            <nav class="category-nav">
+              <button class="category-btn active" data-category="all">
+                Все схемы
+              </button>
+              <button class="category-btn" data-category="beading">
+                <i class="fas fa-gem"></i> Бисероплетение
+              </button>
+              <button class="category-btn" data-category="embroidery">
+                <i class="fas fa-thread"></i> Вышивка
+              </button>
+              <button class="category-btn" data-category="knitting">
+                <i class="fas fa-scroll"></i> Вязание
+              </button>
+              <button class="category-btn" data-category="macrame">
+                <i class="fas fa-knot"></i> Макраме
+              </button>
+            </nav>
+            <!-- ДОБАВЬТЕ ЭТУ КНОПКУ -->
+            <button class="upload-photo-btn" id="uploadSchemeBtn">
+              <i class="fas fa-plus"></i> Добавить схему
+            </button>
+          </div>
+
+          <div class="instructions-grid" id="instructionsContainer"></div>
+
+          <div class="no-content" id="noInstructions" style="display: none">
+            <i class="fas fa-file-alt"></i>
+            <h3>В этой категории пока нет схем</h3>
+            <p>Но скоро обязательно появятся!</p>
+          </div>
         </div>
       </div>
     </main>
@@ -191,9 +221,62 @@
         </div>
       </div>
     </section>
+    <!-- Модальное окно для загрузки схем -->
+    <div class="modal" id="uploadSchemeModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Добавить новую схему</h3>
+          <button class="close-modal" id="closeSchemeModal">&times;</button>
+        </div>
+        <form id="uploadSchemeForm" class="upload-form">
+          <div class="form-group">
+            <label for="schemeTitle">Название схемы:</label>
+            <input type="text" id="schemeTitle" required />
+          </div>
 
+          <div class="form-group">
+            <label for="schemeDescription">Описание:</label>
+            <textarea id="schemeDescription" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="schemeCategory">Категория:</label>
+            <select id="schemeCategory" required>
+              <option value="beading">Бисероплетение</option>
+              <option value="embroidery">Вышивка</option>
+              <option value="knitting">Вязание</option>
+              <option value="macrame">Макраме</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="schemeFile">Выберите файл (PDF, JPG, PNG):</label>
+            <input
+              type="file"
+              id="schemeFile"
+              accept=".pdf,.jpg,.jpeg,.png"
+              required
+            />
+            <div class="image-preview" id="schemePreview"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="schemePreviewImage">Превью (необязательно):</label>
+            <input type="file" id="schemePreviewImage" accept="image/*" />
+            <div class="image-preview" id="previewImagePreview"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelSchemeUpload">
+              Отмена
+            </button>
+            <button type="submit" class="btn-primary">Добавить схему</button>
+          </div>
+        </form>
+      </div>
+    </div>
     <!-- JS ДЛЯ ФИЛЬТРАЦИИ -->
-    <script src="js/app.js?v=sw22"></script>
+    <script src="js/app.js?v=sw32"></script>
     <script>
       // Регистрация Service Worker
       // if ("serviceWorker" in navigator) {
