@@ -1199,21 +1199,27 @@ document.addEventListener("DOMContentLoaded", function () {
           ${getCategoryName(instruction.category)}
         </span>
         <div class="instruction-actions">
-          <a href="${instruction.file}" 
-             class="instruction-download-btn" 
-             ${
-               instruction.file && instruction.file !== "#"
-                 ? "download"
-                 : 'onclick="return false;" style="opacity:0.7; cursor:not-allowed;"'
-             }>
-            <i class="fas fa-download"></i>
-            Скачать
-          </a>
-          <button class="delete-scheme-btn" data-id="${instruction.id}">
-            <i class="fas fa-trash"></i>
-            Удалить
-          </button>
-        </div>
+    <button class="view-scheme-btn" data-id="${instruction.id}" data-file="${
+      instruction.file
+    }" data-type="${instruction.fileType}">
+        <i class="fas fa-eye"></i>
+        Просмотреть
+    </button>
+    <a href="${instruction.file}" 
+       class="instruction-download-btn" 
+       ${
+         instruction.file && instruction.file !== "#"
+           ? "download"
+           : 'onclick="return false;"'
+       }>
+        <i class="fas fa-download"></i>
+        Скачать
+    </a>
+    <button class="delete-scheme-btn" data-id="${instruction.id}">
+        <i class="fas fa-trash"></i>
+        Удалить
+    </button>
+</div>
       </div>
     </div>
   `;
@@ -1346,4 +1352,17 @@ document.addEventListener("DOMContentLoaded", function () {
     "Схемы:",
     instructionsData.length
   );
+
+  // Обработчик для кнопки Просмотреть
+  document.addEventListener("click", function (e) {
+    if (e.target.closest(".view-scheme-btn")) {
+      const btn = e.target.closest(".view-scheme-btn");
+      const fileUrl = btn.getAttribute("data-file");
+      const fileType = btn.getAttribute("data-type");
+      const schemeId = btn.getAttribute("data-id");
+
+      // Просто открываем в новом окне (самый простой способ)
+      window.open(fileUrl, "_blank");
+    }
+  });
 }); // <-- закрывающая скобка DOMContentLoaded

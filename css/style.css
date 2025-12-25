@@ -1348,6 +1348,7 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .delete-scheme-btn {
@@ -1392,4 +1393,66 @@ body {
     flex-direction: column;
     gap: 15px;
   }
+}
+
+/* Стили для кнопок в карточке схемы */
+.instruction-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.view-scheme-btn {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.3s;
+}
+
+.view-scheme-btn:hover {
+  background: #138496;
+}
+
+.instruction-download-btn {
+  background: #28a745;
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.3s;
+}
+
+.instruction-download-btn:hover {
+  background: #218838;
+  color: white;
+}
+
+.delete-scheme-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.3s;
+}
+
+.delete-scheme-btn:hover {
+  background: #c82333;
 }

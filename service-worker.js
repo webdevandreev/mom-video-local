@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE_NAME = "mom-video-v32";
+const CACHE_NAME = "mom-video-v34";
 
 self.addEventListener("install", (event) => {
   console.log("🔄 Service Worker УСТАНОВЛЕН");
