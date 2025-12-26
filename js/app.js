@@ -1,5 +1,421 @@
 // Простой JavaScript для фильтрации видео
 document.addEventListener("DOMContentLoaded", function () {
+
+  // ==================== СИСТЕМА ЛОКАЛЬНЫХ ВИДЕО ====================
+
+// Массив для локальных видео (будет загружаться с сервера)
+let localVideosData = [];
+
+// Функция загрузки локальных видео с сервера
+async function loadLocalVideosFromServer() {
+    try {
+        const response = await fetch('/api/get_videos.php');
+        if (!response.ok) throw new Error('Ошибка сети');
+        
+        const videos = await response.json();
+        console.log(`📹 Загружено локальных видео с сервера: ${videos.length}`);
+        return videos;
+    } catch (error) {
+        console.error('Ошибка загрузки локальных видео:', error);
+        return [];
+    }
+}
+
+// Обновленная функция getVideoEmbed для поддержки локальных видео
+async function getVideoEmbed(video) {
+    if (video.source === 'pinterest') {
+        return createPinterestCard(video);
+    } else if (video.source === 'local') {
+        // Для локальных видео используем HTML5 video player
+        return `
+            <video controls width="100%" style="border-radius: 8px;">
+                <source src="${video.filepath}" type="video/mp4">
+                Ваш браузер не поддерживает тег video.
+            </video>
+        `;
+    } else {
+        // Rutube видео
+        return `<iframe src="https://rutube.ru/play/embed/${video.videoId}/"
+                      style="width:100%; height:500px; border:none; border-radius:8px;"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                      loading="lazy">
+              </iframe>`;
+    }
+}
+
+// Функция создания карточки Pinterest (вся карточка - кнопка)
+function createPinterestCard(video) {
+    const pinUrl = video.pinUrl || `https://www.pinterest.com/pin/${video.videoId}/`;
+
+    return `
+      <a href="${pinUrl}" target="_blank" class="pinterest-full-card">
+        <div class="pinterest-card">
+          <div class="pinterest-card-header">
+            <div class="pinterest-icon">
+              <i class="fab fa-pinterest"></i>
+            </div>
+            <div class="pinterest-title-section">
+              <h3>${video.title}</h3>
+              <span class="source-badge pinterest-badge">
+                <i class="fab fa-pinterest"></i> Pinterest видео
+              </span>
+            </div>
+          </div>
+          
+          <div class="pinterest-description">
+            <p>${video.description}</p>
+          </div>
+          
+          <div class="pinterest-action">
+            <div class="pinterest-action-btn">
+              <i class="fas fa-external-link-alt"></i>
+              <span>Нажмите чтобы открыть в Pinterest</span>
+            </div>
+            <p class="pinterest-hint">
+              <i class="fas fa-hand-pointer"></i> Нажмите на любую область этой карточки
+            </p>
+          </div>
+        </div>
+      </a>
+    `;
+}
+
+// Обновленная функция createVideoCard для поддержки локальных видео
+async function createVideoCard(video) {
+    const article = document.createElement('article');
+    article.className = 'video-card';
+    article.dataset.category = video.category;
+    article.dataset.source = video.source;
+    
+    const embedCode = await getVideoEmbed(video);
+    
+    // Разные заголовки для разных источников
+    let titleHtml = '';
+    let descriptionHtml = '';
+    
+    if (video.source === 'pinterest') {
+        // Pinterest уже имеет свою карточку с заголовком
+        titleHtml = '';
+        descriptionHtml = '';
+    } else if (video.source === 'local') {
+        titleHtml = `
+            <div class="video-header">
+                <h3>${video.title}</h3>
+                <span class="source-badge" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                    <i class="fas fa-server"></i> Локальное видео
+                </span>
+            </div>
+        `;
+        descriptionHtml = video.description ? 
+            `<div class="video-description">${video.description}</div>` : '';
+    } else {
+        // Rutube
+        titleHtml = `
+            <div class="video-header">
+                <h3>${video.title}</h3>
+                <span class="source-badge rutube-badge">
+                    <i class="fas fa-video"></i> Rutube
+                </span>
+            </div>
+        `;
+        descriptionHtml = video.description ? 
+            `<div class="video-description">${video.description}</div>` : '';
+    }
+    
+    // Материалы (только для локальных и rutube видео)
+    let materialsHtml = '';
+    if (video.materials && video.materials.length > 0 && video.source !== 'pinterest') {
+        const materialsChips = video.materials.map(material => 
+            `<div class="material-chip"><i class="fas fa-circle"></i><span>${material}</span></div>`
+        ).join('');
+        
+        materialsHtml = `
+            <div class="video-materials">
+                <div class="materials-header">
+                    <h4>Материалы:</h4>
+                    <button class="materials-toggle">
+                        <span>Показать</span>
+                        <span class="materials-count">${video.materials.length}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="materials-chips">${materialsChips}</div>
+            </div>
+        `;
+    }
+    
+    // Теги
+    let tagsHtml = '';
+    if (video.tags && video.tags.length > 0) {
+        tagsHtml = `<div class="video-tags">${
+            video.tags.map(tag => `<span class="video-tag">${tag}</span>`).join('')
+        }</div>`;
+    }
+    
+    article.innerHTML = `
+        ${titleHtml}
+        <div class="video-container">
+            ${embedCode}
+        </div>
+        <div class="video-meta">
+            ${descriptionHtml}
+            ${materialsHtml}
+            ${tagsHtml}
+            ${video.source === 'local' ? 
+                `<div style="font-size: 0.8em; color: #666; margin-top: 10px;">
+                    <i class="fas fa-hdd"></i> ${video.filesize} • 
+                    <i class="far fa-calendar"></i> ${video.uploadDate}
+                </div>` : ''}
+        </div>
+    `;
+    
+    return article;
+}
+
+// Обновленная функция displayVideos для объединения данных
+async function displayVideos(videos) {
+    console.log(`📹 Отображаю ${videos.length} видео`);
+    videosContainer.innerHTML = '';
+    
+    for (const video of videos) {
+        const videoCard = await createVideoCard(video);
+        videosContainer.appendChild(videoCard);
+    }
+    
+    console.log('✅ Видео отображены');
+}
+
+// Обновленная функция filterVideos
+function filterVideos(category) {
+    // Объединяем внешние и локальные видео
+    const allVideos = [...videosData, ...localVideosData];
+    
+    const filteredVideos = category === 'all' 
+        ? allVideos 
+        : allVideos.filter(video => video.category === category);
+    
+    displayVideos(filteredVideos);
+    noVideosMessage.style.display = filteredVideos.length === 0 ? 'block' : 'none';
+}
+
+// ==================== СИСТЕМА ЗАГРУЗКИ ВИДЕО ====================
+
+// Функции для работы с модальным окном видео
+function openVideoModal() {
+    document.getElementById('uploadVideoModal').style.display = 'block';
+}
+
+function closeVideoModal() {
+    document.getElementById('uploadVideoModal').style.display = 'none';
+    document.getElementById('uploadVideoForm').reset();
+    document.getElementById('videoPreview').style.display = 'none';
+}
+
+// Обработчик предпросмотра видео
+document.getElementById('videoFile')?.addEventListener('change', function(event) {
+    const preview = document.getElementById('videoPreview');
+    const file = event.target.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Для видео показываем иконку и информацию
+            preview.innerHTML = `
+                <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <i class="fas fa-video" style="font-size: 48px; color: #9b59b6;"></i>
+                    <p style="margin-top: 10px; color: #666;">${file.name}</p>
+                    <p style="font-size: 0.8em; color: #999;">
+                        ${(file.size / 1024 / 1024).toFixed(2)} MB • 
+                        ${file.type || 'Неизвестный формат'}
+                    </p>
+                </div>
+            `;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+    }
+});
+
+// Функция для загрузки видео на сервер
+async function handleVideoUpload(event) {
+    event.preventDefault();
+    
+    const title = document.getElementById('videoTitle').value;
+    const description = document.getElementById('videoDescription').value;
+    const category = document.getElementById('videoCategory').value;
+    const materials = document.getElementById('videoMaterials').value.split(',').map(m => m.trim()).filter(m => m);
+    const tags = document.getElementById('videoTags').value.split(',').map(t => t.trim()).filter(t => t);
+    const videoFileInput = document.getElementById('videoFile');
+    
+    if (!videoFileInput.files[0]) {
+        showNotification('📹 Пожалуйста, выберите видео файл', 'warning', 2000);
+        return;
+    }
+    
+    const videoFile = videoFileInput.files[0];
+    
+    // Проверяем размер файла (максимум 500MB)
+    if (videoFile.size > 500 * 1024 * 1024) {
+        showNotification(
+            '📁 Файл слишком большой. Максимальный размер: 500MB',
+            'error',
+            3000
+        );
+        return;
+    }
+    
+    // Показываем уведомление о загрузке
+    const loadingNotification = showNotification(
+        '⏳ Загружаем видео на сервер... Это может занять несколько минут',
+        'info',
+        0
+    );
+    
+    try {
+        // 1. Создаем FormData для отправки файла
+        const formData = new FormData();
+        formData.append('video', videoFile);
+        
+        // 2. Отправляем файл на сервер
+        const uploadResponse = await fetch('/api/upload_video.php', {
+            method: 'POST',
+            body: formData,
+        });
+        
+        // Проверяем ответ
+        if (!uploadResponse.ok) {
+            let errorMsg = `Ошибка ${uploadResponse.status}`;
+            if (uploadResponse.status === 413) {
+                errorMsg = 'Файл слишком большой. Уменьшите размер файла (макс. 500MB)';
+            } else if (uploadResponse.status === 500) {
+                errorMsg = 'Ошибка сервера. Проверьте права доступа к папкам.';
+            }
+            throw new Error(errorMsg);
+        }
+        
+        const uploadResult = await uploadResponse.json();
+        
+        if (!uploadResult.success) {
+            throw new Error(uploadResult.error || 'Ошибка загрузки файла');
+        }
+        
+        // 3. Сохраняем метаданные видео в JSON
+        const saveResponse = await fetch('/api/save_video_data.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: title,
+                description: description,
+                category: category,
+                filename: uploadResult.filename,
+                filepath: uploadResult.filepath,
+                filesize: uploadResult.filesize,
+                materials: materials,
+                tags: tags
+            }),
+        });
+        
+        const saveResult = await saveResponse.json();
+        
+        if (!saveResult.success) {
+            throw new Error(saveResult.error || 'Ошибка сохранения данных');
+        }
+        
+        // 4. Обновляем локальные видео
+        await refreshLocalVideos();
+        
+        // Убираем уведомление о загрузке
+        loadingNotification.classList.add('fade-out');
+        setTimeout(() => loadingNotification.remove(), 300);
+        
+        // Показываем успех
+        showNotification('✅ Видео успешно добавлено!', 'success', 3000);
+        
+        // Переключаемся на категорию загруженного видео
+        document.querySelectorAll('#videos-content .category-btn').forEach(btn => {
+            if (btn.dataset.category === category) {
+                btn.click();
+            }
+        });
+        
+        // Закрываем модальное окно
+        closeVideoModal();
+        
+    } catch (error) {
+        console.error('Ошибка добавления видео:', error);
+        loadingNotification.classList.add('fade-out');
+        setTimeout(() => loadingNotification.remove(), 300);
+        
+        let errorMessage = error.message;
+        if (error.message.includes('413')) {
+            errorMessage = 'Файл слишком большой! Максимальный размер: 500MB.';
+        }
+        
+        showNotification(`❌ ${errorMessage}`, 'error', 5000);
+    }
+}
+
+// Функция обновления локальных видео
+async function refreshLocalVideos() {
+    localVideosData = await loadLocalVideosFromServer();
+    const activeCategory = document.querySelector('#videos-content .category-btn.active').dataset.category;
+    filterVideos(activeCategory);
+}
+
+// Инициализация системы видео
+async function initVideoSystem() {
+    console.log('🎬 Инициализация системы видео...');
+    
+    // Загружаем локальные видео
+    localVideosData = await loadLocalVideosFromServer();
+    console.log(`📹 Загружено локальных видео: ${localVideosData.length}`);
+    
+    // Инициализируем отображение (объединяем внешние и локальные)
+    const allVideos = [...videosData, ...localVideosData];
+    displayVideos(allVideos);
+    
+    // Обработчики для загрузки видео
+    const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+    const closeVideoModalBtn = document.getElementById('closeVideoModal');
+    const cancelVideoBtn = document.getElementById('cancelVideoUpload');
+    const uploadVideoForm = document.getElementById('uploadVideoForm');
+    
+    if (uploadVideoBtn) {
+        uploadVideoBtn.addEventListener('click', openVideoModal);
+        console.log('✅ Кнопка добавления видео подключена');
+    }
+    
+    if (closeVideoModalBtn) {
+        closeVideoModalBtn.addEventListener('click', closeVideoModal);
+    }
+    
+    if (cancelVideoBtn) {
+        cancelVideoBtn.addEventListener('click', closeVideoModal);
+    }
+    
+    if (uploadVideoForm) {
+        uploadVideoForm.addEventListener('submit', handleVideoUpload);
+    }
+    
+    // Закрытие модального окна при клике вне контента
+    const uploadVideoModal = document.getElementById('uploadVideoModal');
+    if (uploadVideoModal) {
+        uploadVideoModal.addEventListener('click', function(event) {
+            if (event.target === uploadVideoModal) {
+                closeVideoModal();
+            }
+        });
+    }
+    
+    console.log('✅ Система видео успешно инициализирована');
+}
+
   // Данные видео (в будущем можно вынести в отдельный JSON)
   const videosData = [
     {
@@ -175,165 +591,18 @@ document.addEventListener("DOMContentLoaded", function () {
   );
   const noVideosMessage = document.getElementById("noVideos");
 
-  // Функция для получения iframe по источнику
-  async function getVideoEmbed(video) {
-    if (video.source === "pinterest") {
-      return createPinterestCard(video);
-    } else {
-      return `<iframe src="https://rutube.ru/play/embed/${video.videoId}/"
-                      style="width:100%; height:500px; border:none; border-radius:8px;"
-                      frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowfullscreen
-                      loading="lazy">
-              </iframe>`;
-    }
-  }
-
-  // Функция создания карточки Pinterest (вся карточка - кнопка)
-  function createPinterestCard(video) {
-    const pinUrl =
-      video.pinUrl || `https://www.pinterest.com/pin/${video.videoId}/`;
-
-    return `
-      <a href="${pinUrl}" target="_blank" class="pinterest-full-card">
-        <div class="pinterest-card">
-          <div class="pinterest-card-header">
-            <div class="pinterest-icon">
-              <i class="fab fa-pinterest"></i>
-            </div>
-            <div class="pinterest-title-section">
-              <h3>${video.title}</h3>
-              <span class="source-badge pinterest-badge">
-                <i class="fab fa-pinterest"></i> Pinterest видео
-              </span>
-            </div>
-          </div>
-          
-          <div class="pinterest-description">
-            <p>${video.description}</p>
-          </div>
-          
-          <div class="pinterest-action">
-            <div class="pinterest-action-btn">
-              <i class="fas fa-external-link-alt"></i>
-              <span>Нажмите чтобы открыть в Pinterest</span>
-            </div>
-            <p class="pinterest-hint">
-              <i class="fas fa-hand-pointer"></i> Нажмите на любую область этой карточки
-            </p>
-          </div>
-        </div>
-      </a>
-    `;
-  }
-
   // Инициализация видео
   console.log("🎬 Инициализация видео...");
-  displayVideos(videosData);
+  initVideoSystem();  // <-- ВАЖНО! ВЫЗЫВАЕМ НОВУЮ ФУНКЦИЮ
 
   // Обработчики для кнопок категорий видео
   categoryButtons.forEach((button) => {
     button.addEventListener("click", function () {
       categoryButtons.forEach((btn) => btn.classList.remove("active"));
       this.classList.add("active");
-      filterVideos(this.dataset.category);
+      filterVideos(this.dataset.category);  // <-- Использует новую функцию
     });
   });
-
-  // Функция фильтрации видео
-  function filterVideos(category) {
-    const filteredVideos =
-      category === "all"
-        ? videosData
-        : videosData.filter((video) => video.category === category);
-
-    displayVideos(filteredVideos);
-    noVideosMessage.style.display =
-      filteredVideos.length === 0 ? "block" : "none";
-  }
-
-  // Функция отображения видео
-  async function displayVideos(videos) {
-    console.log(`📹 Отображаю ${videos.length} видео`);
-
-    videosContainer.innerHTML = "";
-
-    for (const video of videos) {
-      const videoCard = await createVideoCard(video);
-      videosContainer.appendChild(videoCard);
-    }
-
-    console.log("✅ Видео отображены");
-  }
-
-  // Функция создания карточки видео
-  async function createVideoCard(video) {
-    const article = document.createElement("article");
-    article.className = "video-card";
-    article.dataset.category = video.category;
-    article.dataset.source = video.source;
-
-    const materialsChips = video.materials
-      .map(
-        (material) => `
-        <div class="material-chip">
-          <i class="fas fa-circle"></i>
-          <span>${material}</span>
-        </div>`
-      )
-      .join("");
-
-    const tags = video.tags
-      .map((tag) => `<span class="video-tag">${tag}</span>`)
-      .join("");
-
-    const embedCode = await getVideoEmbed(video);
-
-    // Для Pinterest не показываем обычный заголовок (он уже в карточке)
-    const titleHtml =
-      video.source === "pinterest"
-        ? ""
-        : `<div class="video-header">
-          <h3>${video.title}</h3>
-          <span class="source-badge rutube-badge">
-            <i class="fas fa-video"></i> Rutube
-          </span>
-        </div>`;
-
-    article.innerHTML = `
-        ${titleHtml}
-        <div class="video-container">
-          ${embedCode}
-        </div>
-        <div class="video-meta">
-          ${
-            video.source !== "pinterest"
-              ? `<div class="video-description">${video.description}</div>`
-              : ""
-          }
-          ${
-            materialsChips
-              ? `
-          <div class="video-materials">
-            <div class="materials-header">
-              <h4>Материалы:</h4>
-              <button class="materials-toggle">
-                <span>Показать</span>
-                <span class="materials-count">${video.materials.length}</span>
-                <i class="fas fa-chevron-down"></i>
-              </button>
-            </div>
-            <div class="materials-chips">${materialsChips}</div>
-          </div>`
-              : ""
-          }
-          ${tags ? `<div class="video-tags">${tags}</div>` : ""}
-        </div>
-    `;
-
-    return article;
-  }
 
   // Функция аккордеона для материалов
   function initMaterialsAccordion() {
@@ -504,11 +773,15 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="photo-title">${photo.title}</div>
         <div class="photo-description">${photo.description}</div>
         <div class="photo-category">${getCategoryName(photo.category)}</div>
+        <button class="delete-photo-btn">
+            <i class="fas fa-trash"></i> Удалить
+        </button>
       </div>
     `;
 
-    // Добавляем обработчик клика для просмотра фото
-    photoCard.addEventListener("click", () => openPhotoViewer(photo));
+    // Обработчик просмотра (только по клику на изображение)
+    const photoImage = photoCard.querySelector(".photo-image");
+    photoImage.addEventListener("click", () => openPhotoViewer(photo));
 
     return photoCard;
   }
@@ -540,31 +813,6 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Ошибка удаления:", error);
       showNotification("❌ Сетевая ошибка при удалении", "error");
     }
-  }
-
-  // Обновляем функцию createPhotoCard для добавления кнопки удаления:
-  function createPhotoCard(photo) {
-    const photoCard = document.createElement("div");
-    photoCard.className = "photo-card";
-    photoCard.setAttribute("data-id", photo.id);
-
-    photoCard.innerHTML = `
-      <img src="${photo.imageUrl}" alt="${photo.title}" class="photo-image">
-      <div class="photo-info">
-        <div class="photo-title">${photo.title}</div>
-        <div class="photo-description">${photo.description}</div>
-        <div class="photo-category">${getCategoryName(photo.category)}</div>
-        <button class="delete-photo-btn">
-            <i class="fas fa-trash"></i> Удалить
-        </button>
-      </div>
-    `;
-
-    // Обработчик просмотра (только по клику на изображение)
-    const photoImage = photoCard.querySelector(".photo-image");
-    photoImage.addEventListener("click", () => openPhotoViewer(photo));
-
-    return photoCard;
   }
 
   // Функция для получения читаемого названия категории
